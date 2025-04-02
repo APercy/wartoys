@@ -1,4 +1,4 @@
-[![wartoys](https://user-images.githubusercontent.com/95320171/198845469-fe7bbe2d-19e9-42da-8343-9c32c1cdbd0b.png)](https://content.minetest.net/packages/apercy/automobiles_pck/)
+[![wartoys](https://github.com/APercy/wartoys/blob/main/screenshot.jpg)](https://google.com/)
 
 Modpack to add war machines to Luanti.
 Fuel is needed to operate the vehicles, however a small amount of fuel is provided in each vehicle on creation.
