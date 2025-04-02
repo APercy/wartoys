@@ -1,0 +1,6 @@
+# all settings for client menu or in minetest.conf on servers
+
+
+# make vehicles collectable
+collect_wartoys_vehicles (Collect vehicles to inventory) bool true
+
