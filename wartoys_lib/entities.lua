@@ -576,7 +576,6 @@ function wartoys_lib.on_step(self, dtime)
             track_framerate_L = track_framerate
             track_framerate_R = -track_framerate
         end
-        core.chat_send_all(dump(track_framerate_L))
     else
         if math.abs(self._steering_angle)>5 then
 	        newyaw = yaw + dtime*(1 - 1 / (math.abs(longit_speed) + 1)) *
