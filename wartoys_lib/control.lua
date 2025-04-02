@@ -119,15 +119,16 @@ function wartoys_lib.control(self, dtime, hull_direction, longit_speed, longit_d
 	    elseif ctrl.left then
 		    self._steering_angle = math.min(self._steering_angle+steering_speed*dtime,steering_limit)
         else
+            self._steering_angle = 0
             --center steering
-            if longit_speed > 0 then
+            --[[if longit_speed > 0 then
                 local factor = 1
                 if self._steering_angle > 0 then factor = -1 end
                 local correction = (steering_limit*(longit_speed/75)) * factor
                 local before_correction = self._steering_angle
                 self._steering_angle = self._steering_angle + correction
                 if math.sign(before_correction) ~= math.sign(self._steering_angle) then self._steering_angle = 0 end
-            end
+            end]]--
 	    end
 
         local angle_factor = self._steering_angle / 60
