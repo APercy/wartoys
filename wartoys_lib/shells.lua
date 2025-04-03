@@ -202,10 +202,10 @@ function wartoys_lib.add_blast_damage(pos, radius, damage_cal)
 
 end
 
-function wartoys_lib.explode(object, radius)
+function wartoys_lib.explode(object, radius, ipos)
     if not object then return end
     local rnd_radius = math.random(radius-1, radius+1)
-    local pos = object:get_pos()
+    local pos = ipos or object:get_pos()
     wartoys_lib.add_destruction_effects(pos, rnd_radius + math.random(2,4), true)
 
     -- remove nodes
@@ -355,11 +355,6 @@ function wartoys_lib.register_shell(ent_name, inv_image, bullet_texture, descrip
                             pitch = 1.0,
                         }, true)
 
-                        --explode here
-                        wartoys_lib.explode(self.object, self.bomb_radius)
-
-						self.object:remove()
-
                         --explode TNT
                         local node = core.get_node(pos)
                         local node_name = node.name
@@ -367,6 +362,11 @@ function wartoys_lib.register_shell(ent_name, inv_image, bullet_texture, descrip
 
                         local i_pos = thing.intersection_point
                         add_flash(i_pos)
+
+                        --explode here
+                        wartoys_lib.explode(self.object, self.bomb_radius, i_pos)
+
+						self.object:remove()
 
 						if core.is_protected(pos, self.shooter_name) then
 							return
