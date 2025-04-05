@@ -149,6 +149,7 @@ light_tank.vehicle_properties1 = {
     _track_xpos = 10.5,
     _track_ent = "wartoys_light_tank:track",
     _track_length = 15,
+    _run_over_damage = 60,
 
     _cannon_min_angle = -15,
     _cannon_max_angle = 18,

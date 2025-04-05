@@ -684,39 +684,31 @@ function wartoys_lib.on_step(self, dtime)
         newpitch = newpitch + (velocity.y * math.rad(max_pitch - h_vel_compensation))
     else
         local turn_effect_speed = longit_speed
-        if self._is_motorcycle then
-            if turn_effect_speed > 20 then turn_effect_speed = 20 end
-            newroll = (-self._steering_angle/100)*(turn_effect_speed/10)
 
-            if is_attached == false and stop == true then
-                newroll = self._stopped_roll
+        if turn_effect_speed > 10 then turn_effect_speed = 10 end
+        if math.abs(longit_speed) > 0 then
+            --local tilt_effect = (-self._steering_angle/100)*(turn_effect_speed/30)
+            local max_tilt = 10
+            local tilt_effect = (-later_speed/12)*(turn_effect_speed/30)
+            local tire_burn = false
+            if tilt_effect > max_tilt then
+                tilt_effect = max_tilt
             end
-        else
-            if turn_effect_speed > 10 then turn_effect_speed = 10 end
-            if math.abs(longit_speed) > 0 then
-                --local tilt_effect = (-self._steering_angle/100)*(turn_effect_speed/30)
-                local max_tilt = 10
-                local tilt_effect = (-later_speed/12)*(turn_effect_speed/30)
-                local tire_burn = false
-                if tilt_effect > max_tilt then
-                    tilt_effect = max_tilt
-                end
-                if tilt_effect < -max_tilt then
-                    tilt_effect = -max_tilt
-                end 
-                newroll = tilt_effect * -1
-                --self.front_suspension:set_rotation({x=0,y=0,z=tilt_effect})
-                --self.rear_suspension:set_rotation({x=0,y=0,z=tilt_effect})
-                newroll = newroll + (self._roll or 0)
+            if tilt_effect < -max_tilt then
+                tilt_effect = -max_tilt
+            end 
+            newroll = tilt_effect * -1
+            --self.front_suspension:set_rotation({x=0,y=0,z=tilt_effect})
+            --self.rear_suspension:set_rotation({x=0,y=0,z=tilt_effect})
+            newroll = newroll + (self._roll or 0)
 
 
-                if (noded and noded.drawtype ~= 'airlike') then
-                    if noded.drawtype ~= 'liquid' then
-                        local min_later_speed = self._min_later_speed or 3
-                        local speed_for_smoke = min_later_speed / 2
-                        if (later_speed > speed_for_smoke or later_speed < -speed_for_smoke) and not self._is_motorcycle then
-                            wartoys_lib.add_smoke(self, curr_pos, yaw, self._rear_wheel_xpos*self._vehicle_scale)
-                        end
+            if (noded and noded.drawtype ~= 'airlike') then
+                if noded.drawtype ~= 'liquid' then
+                    local min_later_speed = self._min_later_speed or 3
+                    local speed_for_smoke = min_later_speed / 2
+                    if (later_speed > speed_for_smoke or later_speed < -speed_for_smoke) and not self._is_motorcycle then
+                        wartoys_lib.add_smoke(self, curr_pos, yaw, self._rear_wheel_xpos*self._vehicle_scale)
                     end
                 end
             end
@@ -726,4 +718,25 @@ function wartoys_lib.on_step(self, dtime)
 	self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
 
     self._longit_speed = longit_speed
+
+    --kills and crushings
+    if math.abs(longit_speed) > 0 then
+        --affect nodes
+        local wall_sizes = {x=4,y=2,z=4}
+        wartoys_lib.interact_ahead(curr_pos, newyaw, wall_sizes, longit_speed, false)
+
+        --affect objects
+        local blocks_ahead = 2
+        local f_x, f_z = wartoys_lib.get_xz_from_hipotenuse(curr_pos.x, curr_pos.z, newyaw, blocks_ahead)
+        local ahead_pos = curr_pos
+        ahead_pos.x = f_x
+        ahead_pos.y = ahead_pos.y + 1
+        ahead_pos.z = f_z
+
+        local radius = ((self._track_xpos + (self._track_xpos/5)) / 10) --tank width = x track + 20%
+        if longit_speed > 0 then
+            wartoys_lib.affect_entities(self, ahead_pos, radius, self._run_over_damage)
+        end
+    end
+
 end
