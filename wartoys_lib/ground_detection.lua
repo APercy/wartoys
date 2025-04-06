@@ -238,6 +238,14 @@ function wartoys_lib.get_obstacle(ref_pos, ammount)
     return retval    
 end
 
+local dirtable_nodes = {
+    ["default:dirt_with_grass"]="default:dirt",
+    ["default:dirt_with_dry_grass"]="default:dirt",
+    ["default:dirt_with_rainforest_litter"]="default:dirt",
+    ["default:dirt_with_coniferous_litter"]="default:dirt",
+    ["default:dry_dirt_with_dry_grass"]="default:dry_dirt",
+}
+
 function wartoys_lib.eval_interception(initial_pos, end_pos)
     local ret_y = nil
 	local cast = minetest.raycast(initial_pos, end_pos, true, false)
@@ -252,7 +260,17 @@ function wartoys_lib.eval_interception(initial_pos, end_pos)
                 if drawtype ~= "plantlike" then
                     if initial_pos.y >= pos.y then 
                         ret_y = pos.y
-                        --minetest.chat_send_all("ray intercection: " .. dump(pos.y) .. " -- " .. nodename)
+                        --core.chat_send_all("ray intercection: " .. dump(pos.y) .. " -- " .. nodename)
+                    end
+                    if wartoys_lib.disable_soil_crushing == false then
+                        for index, value in pairs(dirtable_nodes)
+                        do
+                            if index == nodename then
+                                local new_pos = vector.new(pos)
+                                new_pos.y = new_pos.y - 1
+                                minetest.set_node(new_pos, {name=value})
+                            end
+                        end
                     end
                     break
                 end

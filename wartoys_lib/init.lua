@@ -11,7 +11,6 @@ if(core.get_translator ~= nil) then
 
 else
     wartoys_lib.S = function ( s ) return s end
-
 end
 
 local S = wartoys_lib.S
@@ -25,6 +24,8 @@ wartoys_lib.gravity = 9.8
 wartoys_lib.ideal_step = 0.2
 wartoys_lib.is_creative = core.settings:get_bool("creative_mode", false)
 wartoys_lib.can_collect_car = core.settings:get_bool("collect_wartoys", true)
+wartoys_lib.disable_crushing = core.settings:get_bool("disable_crushing", false)
+wartoys_lib.disable_soil_crushing = core.settings:get_bool("disable_soil_crushing", true)
 
 --cars colors
 wartoys_lib.colors ={

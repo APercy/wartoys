@@ -1,6 +1,7 @@
 # all settings for client menu or in minetest.conf on servers
 
 
-# make vehicles collectable
-collect_wartoys_vehicles (Collect vehicles to inventory) bool true
+collect_wartoys (Collect vehicles to inventory) bool true
+disable_crushing (Disables plant and structures crushing) bool false
+disable_soil_crushing (Disables soil crushing/corverting to dirt) bool true
 

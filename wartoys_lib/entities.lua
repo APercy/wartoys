@@ -721,9 +721,11 @@ function wartoys_lib.on_step(self, dtime)
 
     --kills and crushings
     if math.abs(longit_speed) > 0 then
-        --affect nodes
-        local wall_sizes = {x=4,y=2,z=4}
-        wartoys_lib.interact_ahead(curr_pos, newyaw, wall_sizes, longit_speed, false)
+        if wartoys_lib.disable_crushing == false then
+            --affect nodes
+            local wall_sizes = {x=4,y=2,z=4}
+            wartoys_lib.interact_ahead(curr_pos, newyaw, wall_sizes, longit_speed, false)
+        end
 
         --affect objects
         local blocks_ahead = 2
