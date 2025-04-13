@@ -149,12 +149,9 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
             local paint_f = wartoys_lib.set_paint
             if self._painting_function then paint_f = self._painting_function end
             if paint_f(self, puncher, itmstck) == false then
-                local is_admin = false
-                is_admin = minetest.check_player_privs(puncher, {server=true})
-                --minetest.chat_send_all('owner '.. self.owner ..' - name '.. name)
-			    if not self.driver and (self.owner == name or is_admin == true) and toolcaps and
-                        toolcaps.damage_groups and toolcaps.damage_groups.fleshy then
-                    self.hp = self.hp - 10
+			    --if not self.driver and (self.owner == name or is_admin == true) and toolcaps and
+                if toolcaps and toolcaps.damage_groups then
+                    self.hp = self.hp - 5
                     minetest.sound_play("wartoys_collision", {
                         object = self.object,
                         max_hear_distance = 5,
@@ -194,6 +191,8 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
                 wartoys_lib.spawn_shell(self, name, armament, speed)
                 core.chat_send_player(self.driver_name, "Fire!")
             end
+        else
+
         end
     end
 end
@@ -292,12 +291,16 @@ function wartoys_lib.on_activate(self, staticdata, dtime_s)
 
     if self._track_ent then
         local lf_track=minetest.add_entity(pos,self._track_ent)
+        local track_ent = lf_track:get_luaentity()
+        track_ent.hp = self._track_hp
         lf_track:set_attach(self.object,'',{x=-self._track_xpos,y=0,z=0},{x=0,y=0,z=0})
 	    -- set the animation once and later only change the speed
         lf_track:set_animation(self._track_frames, 0, 0, true)
         self.lf_track = lf_track
 
         local rf_track=minetest.add_entity(pos,self._track_ent)
+        track_ent = rf_track:get_luaentity()
+        track_ent.hp = self._track_hp
         rf_track:set_attach(self.object,'',{x=self._track_xpos,y=0,z=0},{x=0,y=0,z=0})
 	    -- set the animation once and later only change the speed
         rf_track:set_animation(self._track_frames, 0, 0, true)
@@ -338,7 +341,7 @@ function wartoys_lib.on_activate(self, staticdata, dtime_s)
         self._extra_items_function(self)
     end
 
-	self.object:set_armor_groups({immortal=1})
+	--self.object:set_armor_groups({immortal=1})
 
 	local inv = minetest.get_inventory({type = "detached", name = self._inv_id})
 	-- if the game was closed the inventories have to be made anew, instead of just reattached

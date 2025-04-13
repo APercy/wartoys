@@ -23,7 +23,7 @@ wartoys_lib.fuel = {['biofuel:biofuel'] = 1,['biofuel:bottle_fuel'] = 1,
 wartoys_lib.gravity = 9.8
 wartoys_lib.ideal_step = 0.2
 wartoys_lib.is_creative = core.settings:get_bool("creative_mode", false)
-wartoys_lib.can_collect_car = core.settings:get_bool("collect_wartoys", true)
+wartoys_lib.can_collect_car = core.settings:get_bool("collect_wartoys", false)
 wartoys_lib.disable_crushing = core.settings:get_bool("disable_crushing", false)
 wartoys_lib.disable_soil_crushing = core.settings:get_bool("disable_soil_crushing", true)
 
@@ -243,6 +243,8 @@ end
 
 -- attach passenger
 function wartoys_lib.attach_pax(self, player, onside)
+    if player then return end --TODO provisory blocked
+
     local onside = onside or false
     local name = player:get_player_name()
 

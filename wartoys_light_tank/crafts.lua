@@ -28,7 +28,7 @@ minetest.register_tool("wartoys_light_tank:tank", {
             local owner = placer:get_player_name()
             if ent then
                 ent.owner = owner
-                ent.hp = 50 --reset hp
+                ent.hp = 1000 --reset hp
                 --minetest.chat_send_all("owner: " .. ent.owner)
 		        car:set_yaw(placer:get_look_horizontal())
 		        itemstack:take_item()
