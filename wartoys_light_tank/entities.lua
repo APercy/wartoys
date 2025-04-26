@@ -51,6 +51,7 @@ minetest.register_entity('wartoys_light_tank:track',{
 initial_properties = {
 	physical = true,
 	collide_with_objects=true,
+    collisionbox = {-0.1, 0, -0.1, 0.1, 1, 0.1},
 	pointable=false,
 	visual = "mesh",
 	mesh = "tank_track.b3d",
@@ -104,7 +105,7 @@ light_tank.vehicle_properties1 = {
     owner = "",
     static_save = true,
     infotext = "Light Tank!",
-    hp = 1000,
+    hp = 100,
     buoyancy = 2,
     physics = wartoys_lib.physics,
     lastvelocity = vector.new(),

@@ -96,6 +96,24 @@ function wartoys_lib.on_rightclick (self, clicker)
 	end
 end
 
+local function get_damage(self, time_last_punch, caps)
+	local damage = 0
+	local armor_groups = assert(self.object:get_armor_groups())
+	for group, group_damage in pairs(caps.damage_groups) do
+        --core.chat_send_all("group "..dump(group))
+        --core.chat_send_all("damage "..dump(group_damage))
+        --core.chat_send_all("armor "..dump(armor_groups))
+		damage = damage + group_damage * (armor_groups[group] or 0) / 10
+	end
+    if damage == 0 then
+        damage = 5 / 10
+    end
+
+	local retval = damage * math.min(1, math.max(0, time_last_punch / caps.full_punch_interval))
+    --core.chat_send_all(dump(damage))
+    return retval
+end
+
 function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
 	if not puncher or not puncher:is_player() then
 		return
@@ -107,9 +125,14 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
         self.owner = name
     end
     	
-    if self.driver_name and self.driver_name ~= name then
-		-- do not allow other players to remove the object while there is a driver
-		return
+    if (not self.driver_name or self.driver_name == "") then
+		-- do not allow other players destroy it without a driver
+        if self.owner == name or minetest.check_player_privs(puncher, {server=true, protection_bypass = true}) then
+            --just go ahead
+        else
+            --lets exit
+		    return
+        end
 	end
     
     local is_attached = false
@@ -134,7 +157,6 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
     -- end refuel
 
     if is_attached == false then
-
         -- deal with painting or destroying
 	    if itmstck then
             --race status restart
@@ -150,8 +172,9 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
             if self._painting_function then paint_f = self._painting_function end
             if paint_f(self, puncher, itmstck) == false then
 			    --if not self.driver and (self.owner == name or is_admin == true) and toolcaps and
-                if toolcaps and toolcaps.damage_groups then
-                    self.hp = self.hp - 5
+                --if toolcaps and toolcaps.damage_groups then
+                    --core.chat_send_all(dump(toolcaps))
+                    self.hp = self.hp - get_damage(self, ttime, toolcaps)
                     minetest.sound_play("wartoys_collision", {
                         object = self.object,
                         max_hear_distance = 5,
@@ -159,7 +182,7 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
                         fade = 0.0,
                         pitch = 1.0,
                     })
-			    end
+			    --end
 		    end
         end
 
@@ -341,7 +364,7 @@ function wartoys_lib.on_activate(self, staticdata, dtime_s)
         self._extra_items_function(self)
     end
 
-	--self.object:set_armor_groups({immortal=1})
+	self.object:set_armor_groups({cracky=1})
 
 	local inv = minetest.get_inventory({type = "detached", name = self._inv_id})
 	-- if the game was closed the inventories have to be made anew, instead of just reattached
@@ -711,7 +734,9 @@ function wartoys_lib.on_step(self, dtime)
                     local min_later_speed = self._min_later_speed or 3
                     local speed_for_smoke = min_later_speed / 2
                     if (later_speed > speed_for_smoke or later_speed < -speed_for_smoke) and not self._is_motorcycle then
-                        wartoys_lib.add_smoke(self, curr_pos, yaw, self._rear_wheel_xpos*self._vehicle_scale)
+                        if self._rear_wheel_xpos then
+                            wartoys_lib.add_smoke(self, curr_pos, yaw, self._rear_wheel_xpos*self._vehicle_scale)
+                        end
                     end
                 end
             end
