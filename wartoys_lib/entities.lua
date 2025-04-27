@@ -133,7 +133,7 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
             --just go ahead
         else
             --lets exit - tha tank is only destructable when it has a pilot
-		    --return
+		    return
         end
 	end
     
@@ -173,13 +173,13 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
             local paint_f = wartoys_lib.set_paint
             if self._painting_function then paint_f = self._painting_function end
             local is_painting = paint_f(self, puncher, itmstck)
-            core.chat_send_all("paint_f: "..dump(is_painting))
+            --core.chat_send_all("paint_f: "..dump(is_painting))
             if is_painting ~= true then
-                core.chat_send_all("punch")
+                --core.chat_send_all("punch")
                 if toolcaps then
                     --core.chat_send_all(dump(toolcaps))
                     self.hp = self.hp - get_damage(self, ttime, toolcaps)
-                    core.chat_send_all("hp: "..dump(self.hp))
+                    --core.chat_send_all("hp: "..dump(self.hp))
                     minetest.sound_play("wartoys_collision", {
                         object = self.object,
                         max_hear_distance = 5,
