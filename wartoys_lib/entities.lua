@@ -10,6 +10,7 @@ initial_properties = {
 
     on_activate = function(self,std)
 	    self.sdata = minetest.deserialize(std) or {}
+        self.object:set_armor_groups({immortal=1})
 	    if self.sdata.remove then self.object:remove() end
     end,
 
@@ -33,6 +34,7 @@ initial_properties = {
 	
     on_activate = function(self,std)
 	    self.sdata = minetest.deserialize(std) or {}
+        self.object:set_armor_groups({immortal=1})
 	    if self.sdata.remove then self.object:remove() end
     end,
 	    
@@ -130,8 +132,8 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
         if self.owner == name or minetest.check_player_privs(puncher, {server=true, protection_bypass = true}) then
             --just go ahead
         else
-            --lets exit
-		    return
+            --lets exit - tha tank is only destructable when it has a pilot
+		    --return
         end
 	end
     
@@ -170,11 +172,14 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
 
             local paint_f = wartoys_lib.set_paint
             if self._painting_function then paint_f = self._painting_function end
-            if paint_f(self, puncher, itmstck) == false then
-			    --if not self.driver and (self.owner == name or is_admin == true) and toolcaps and
-                --if toolcaps and toolcaps.damage_groups then
+            local is_painting = paint_f(self, puncher, itmstck)
+            core.chat_send_all("paint_f: "..dump(is_painting))
+            if is_painting ~= true then
+                core.chat_send_all("punch")
+                if toolcaps then
                     --core.chat_send_all(dump(toolcaps))
                     self.hp = self.hp - get_damage(self, ttime, toolcaps)
+                    core.chat_send_all("hp: "..dump(self.hp))
                     minetest.sound_play("wartoys_collision", {
                         object = self.object,
                         max_hear_distance = 5,
@@ -182,14 +187,8 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
                         fade = 0.0,
                         pitch = 1.0,
                     })
-			    --end
+		        end
 		    end
-        end
-
-        if self.hp <= 0 then
-            local destroy_f = wartoys_lib.destroy
-            if self._destroy_function then destroy_f = self._destroy_function end
-            destroy_f(self)
         end
     else
         --temporary shot routine
@@ -217,6 +216,11 @@ function wartoys_lib.on_punch (self, puncher, ttime, toolcaps, dir, damage)
         else
 
         end
+    end
+    if self.hp <= 0 then
+        local destroy_f = wartoys_lib.destroy
+        if self._destroy_function then destroy_f = self._destroy_function end
+        destroy_f(self)
     end
 end
 
